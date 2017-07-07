@@ -56,6 +56,18 @@
   tags:
     - configuration
 
+- name: Deploy Certificate Revocation List
+  copy:
+    src: crl.pem
+    dest: /etc/openvpn/crl.pem
+    mode: "0644"
+  notify:
+    - reload openvpn
+  when: openvpn_use_crl is defined and openvpn_use_crl
+  tags:
+    - crl
+    - revoke
+
 - name: Allow masqueraded openvpn traffic through firewall
   blockinfile:
     path: /etc/ufw/before.rules

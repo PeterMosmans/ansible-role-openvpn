@@ -28,8 +28,6 @@ Role Variables
 
 Available variables are listed below, along with default values
 
-# Default networking interface
-
 **openvpn_interface**: Default networking interface. The default value can be
 found in `defaults/main.yml`:
 
@@ -60,6 +58,13 @@ found in `defaults/main.yml`:
 ```
 openvpn_proto: udp
 ```
+
+
+**openvpn_use_crl**: If this parameter is defined, then a certificate
+revocation list (CRL) will be deployed to the server, and the server will be
+configured to use it. The CRL will be expected as `crl.pem`, and should be
+accessible by this role (e.g. by locating it in the `files` folder).
+
 
 ## Templates
 
