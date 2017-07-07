@@ -1,0 +1,102 @@
+---
+# tasks file for PeterMosmans.openvpn
+
+- name: Install openvpn and ufw
+  apt:
+    name: "{{ item }}"
+    install-recommends: no
+    state: present
+  with_items:
+    - openvpn
+    - ufw
+
+- name: Apply / deploy openvpn template
+  template:
+    src: "{{ item.src }}"
+    dest: /etc/openvpn/{{ item.dest }}
+  notify:
+    - reload openvpn
+  with_items:
+    - src: server.conf.j2
+      dest: server.conf
+  tags:
+    - configuration
+
+- name: Set up openvpn file structure
+  file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode|default('0755')}}"
+    owner: "{{ item.owner|default('root') }}"
+    group: "{{ item.group|default('root') }}"
+    state: "{{ item.state|default('directory') }}"
+  with_items:
+    - path: /etc/openvpn
+    - path: /etc/openvpn/ipp.txt
+      state: touch
+      mode: "0600"
+    - path: /etc/openvpn/keys
+      mode: "0600"
+    - path: /etc/openvpn/log
+    - path: /etc/openvpn/log/openvpn-status.log
+      state: touch
+      mode: "0644"
+
+- name: Deploy server keys and certificates
+  copy:
+    src: "{{ item }}"
+    dest: /etc/openvpn/keys/{{ item }}
+    mode: "0600"
+  notify:
+    - reload openvpn
+  with_items:
+    - ca.crt
+    - server.crt
+    - server.key
+    - dh2048.pem
+  tags:
+    - configuration
+
+- name: Allow masqueraded openvpn traffic through firewall
+  blockinfile:
+    path: /etc/ufw/before.rules
+    insertbefore: "^# Don't delete these required lines, otherwise there will be errors$"
+    marker: "# {mark} ANSIBLE MANAGED OPENVPN BLOCK"
+    block: |
+      # nat Table rules
+      *nat
+      :POSTROUTING ACCEPT [0:0]
+      # Allow forwarding traffic from OpenVPN to {{ openvpn_interface }}
+      -A POSTROUTING -s 10.10.10.0/24 -o {{ openvpn_interface }} -j MASQUERADE
+      COMMIT
+  notify:
+    - reload ufw
+  tags:
+    - ufw
+
+- name: Allow forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    state: present
+  tags:
+    - network
+
+- name: Allow ufw forwarding by default
+  lineinfile:
+    path: /etc/default/ufw
+    regexp: "^DEFAULT_FORWARD_POLICY="
+    line: 'DEFAULT_FORWARD_POLICY="ACCEPT"'
+  notify:
+    - reload ufw
+  tags:
+    - ufw
+
+- name: Allow openvpn through firewall
+  ufw:
+    rule: allow
+    proto: "{{ openvpn_proto }}"
+    port: "{{ openvpn_port }}"
+  notify:
+    - reload ufw
+  tags:
+    - ufw

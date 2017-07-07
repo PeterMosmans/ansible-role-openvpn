@@ -1,0 +1,31 @@
+# {{ ansible_managed }}
+
+port {{ openvpn_port }}
+proto {{ openvpn_proto }}
+dev tun
+# data channel ciphers
+cipher AES-256-CBC
+auth SHA256
+# control channel ciphers
+# tls-cipher TLS-ECDH-RSA-WITH-AES-128-GCM-SHA256:TLS-ECDH-ECDSA-WITH-AES-128-GCM-SHA256:TLS-ECDH-RSA-WITH-AES-128-CBC-SHA256:TLS-ECDH-ECDSA-WITH-AES-128-CBC-SHA256:TLS-ECDH-RSA-WITH-AES-128-CBC-SHA:TLS-RSA-WITH-AES-128-GCM-SHA256
+ca {{ openvpn_path }}/keys/ca.crt
+cert {{ openvpn_path }}/keys/server.crt
+key {{ openvpn_path }}/keys/server.key
+dh {{ openvpn_path }}/keys/dh2048.pem
+push "redirect-gateway def1"
+push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
+user nobody
+group nogroup
+server 10.10.10.0 255.255.255.0
+keepalive 10 120
+comp-lzo
+persist-key
+persist-tun
+ifconfig-pool-persist ipp.txt
+status {{ openvpn_path }}/log/openvpn-status.log
+verb 4
+client-to-client
+tcp-queue-limit 256
+#link-mtu 1400
+mssfix 1425

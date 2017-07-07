@@ -1,0 +1,8 @@
+---
+# defaults file for PeterMosmans.openvpn
+
+# Default networking interface
+openvpn_interface: enp0s3
+openvpn_path: /etc/openvpn
+openvpn_port: 1194
+openvpn_proto: udp
