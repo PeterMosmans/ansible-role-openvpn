@@ -5,14 +5,23 @@ Build status for this
 role:
 [![Build Status](https://travis-ci.org/PeterMosmans/ansible-role-openvpn.svg)](https://travis-ci.org/PeterMosmans/ansible-role-openvpn)
 
-This role installs and configures an OpenVPN service, including a firewall
-(ufw). It does *not* generate keys and certificates, but it can and will deploy
-those.
+This role installs and configures (hardens) an OpenVPN service, including a
+firewall (ufw). It does *not* generate keys and certificates, but it can and
+will deploy those.
+
 
 Requirements
 ------------
 
-None.
+You'll need a Certificate Authority certificate (`ca.crt`), a server private key
+(`server.key`) and corresponding certificate (`server.crt`), and a
+Diffie-Hellman parameter file (`dh2048.pem`) for this role.
+
+It is highly recommended to generate those 'offline', and not use tools like
+e.g. `easy-rsa` to generate those on the OpenVPN server itself.
+
+The role will **fail** without those files.
+
 
 Role Variables
 --------------
