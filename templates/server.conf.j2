@@ -5,9 +5,10 @@ proto {{ openvpn_proto }}
 dev tun
 # data channel ciphers
 cipher AES-256-CBC
+tls-version-min 1.2
 auth SHA256
 # control channel ciphers
-# tls-cipher TLS-ECDH-RSA-WITH-AES-128-GCM-SHA256:TLS-ECDH-ECDSA-WITH-AES-128-GCM-SHA256:TLS-ECDH-RSA-WITH-AES-128-CBC-SHA256:TLS-ECDH-ECDSA-WITH-AES-128-CBC-SHA256:TLS-ECDH-RSA-WITH-AES-128-CBC-SHA:TLS-RSA-WITH-AES-128-GCM-SHA256
+tls-cipher TLS-ECDHE-RSA-WITH-AES-256-GCM-SHA384
 ca {{ openvpn_path }}/keys/ca.crt
 cert {{ openvpn_path }}/keys/server.crt
 key {{ openvpn_path }}/keys/server.key
