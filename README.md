@@ -59,6 +59,12 @@ found in `defaults/main.yml`:
 openvpn_proto: udp
 ```
 
+### Optional:
+
+**openvpn_static_key**: If this parameter is defined, then a static key will be
+used by the server. The static key will be expected as `tls-auth.key`, and
+should be accessible by this role (e.g. by locating it in the `files` folder).
+
 
 **openvpn_use_crl**: If this parameter is defined, then a certificate
 revocation list (CRL) will be deployed to the server, and the server will be

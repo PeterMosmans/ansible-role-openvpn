@@ -13,8 +13,11 @@ ca {{ openvpn_path }}/keys/ca.crt
 cert {{ openvpn_path }}/keys/server.crt
 key {{ openvpn_path }}/keys/server.key
 dh {{ openvpn_path }}/keys/dh2048.pem
+{% if openvpn_static_key is defined %}
+tls-auth {{ openvpn_path }}/tls-auth.key 0
+{% endif %}
 {% if openvpn_use_crl is defined %}
-crl-verify {{ openvpn_path}}/crl.pem
+crl-verify {{ openvpn_path }}/crl.pem
 {% endif %}
 push "redirect-gateway def1"
 push "dhcp-option DNS 8.8.8.8"
