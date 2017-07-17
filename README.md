@@ -36,6 +36,17 @@ openvpn_interface: enp0s3
 ```
 
 
+**openvpn_ipv6_server**: Private ipv6 server address. By default, it is
+not configured, and ipv6 will not be used/tunneled. If set, then **all** ipv6 traffic
+will be tunneled over the OpenVPN tunnel.
+
+Example:
+```
+openvpn_ipv6_server fdaa:bbbb:cccc:dddd:eeee:/64
+
+```
+
+
 **openvpn_path**: Path where OpenVPN expects its configuration. The default
 value can be found in `defaults/main.yml`:
 

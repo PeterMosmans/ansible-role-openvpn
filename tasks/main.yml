@@ -68,7 +68,7 @@
     - crl
     - revoke
 
-- name: Allow masqueraded openvpn traffic through firewall
+- name: Allow masqueraded IPv4 openvpn traffic through firewall
   blockinfile:
     path: /etc/ufw/before.rules
     insertbefore: "^# Don't delete these required lines, otherwise there will be errors$"
@@ -85,11 +85,38 @@
   tags:
     - ufw
 
+- name: Allow masqueraded IPv6 openvpn traffic through firewall
+  blockinfile:
+    path: /etc/ufw/before6.rules
+    insertbefore: "^# Don't delete these required lines, otherwise there will be errors$"
+    marker: "# {mark} ANSIBLE MANAGED OPENVPN BLOCK"
+    block: |
+      # nat Table rules
+      *nat
+      :POSTROUTING ACCEPT [0:0]
+      # Allow forwarding traffic from OpenVPN to {{ openvpn_interface }}
+      -A POSTROUTING -s {{ openvpn_ipv6_server }}  -o {{ openvpn_interface }} -j MASQUERADE
+      COMMIT
+  notify:
+    - reload ufw
+  when: openvpn_ipv6_server is defined
+  tags:
+    - ufw
+
 - name: Allow forwarding
   sysctl:
     name: net.ipv4.ip_forward
     value: 1
     state: present
+  tags:
+    - network
+
+- name: Allow IPv6 forwarding
+  sysctl:
+    name: net.ipv6.ip_forward
+    value: 1
+    state: present
+  when: openvpn_ipv6_server is defined
   tags:
     - network
 

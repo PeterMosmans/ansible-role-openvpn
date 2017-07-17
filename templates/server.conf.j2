@@ -25,6 +25,10 @@ push "dhcp-option DNS 8.8.4.4"
 user nobody
 group nogroup
 server 10.10.10.0 255.255.255.0
+{% if openvpn_ipv6_server is defined %}
+server-ipv6 {{ openvpn_ipv6_server }}
+push "route-ipv6 00::/0"
+{% endif %}
 keepalive 10 120
 comp-lzo
 persist-key
