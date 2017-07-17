@@ -103,6 +103,9 @@ server.key
 dh2048.pem
 ```
 
+This role will also install uncomplicated firewall (ufw). This **could** lead to
+dropped connections.
+
 Example Playbook
 ----------------
 ```
