@@ -42,7 +42,7 @@ will be tunneled over the OpenVPN tunnel.
 
 Example:
 ```
-openvpn_ipv6_server fdaa:bbbb:cccc:dddd:eeee:/64
+openvpn_ipv6_server: fdaa:bbbb:cccc:dddd:eeee:/64
 
 ```
 
